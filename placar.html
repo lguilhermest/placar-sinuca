@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Placar de Sinuca</title>
+  <style>
+    :root {
+      --texto: 24px;
+      --placar: #000;
+      --frames: #1d4ed8;
+      --pontos: #1e3a8a;
+      --indicador: #fff;
+      --padding: 16px;
+    }
+
+    * {
+      padding: 0;
+      margin: 0;
+      font-size: var(--texto);
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .scoreboard {
+      position: fixed;
+      bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--placar);
+      border-radius: 4px;
+      color: #fff;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .player {
+      flex: 1;
+      padding-inline: 16px;
+      position: relative;
+    }
+
+    .score {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--frames);
+      height: 100%;
+      width: fit-content;
+    }
+
+    .score>span {
+      background-color: var(--pontos);
+      padding: var(--padding);
+      min-width: 2rem;
+    }
+
+    .score>div {
+      padding-inline: var(--padding);
+    }
+
+    .score>div>span {
+      padding-inline: var(--padding);
+      ;
+    }
+
+    .indicator {
+      display: none;
+      position: absolute;
+      content: "";
+      border: 12px solid transparent;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .indicator-left {
+      border-right-color: var(--indicador);
+      border-left: 0px;
+      right: 4px;
+    }
+
+    .indicator-right {
+      border-left-color: var(--indicador);
+      border-right: 0px;
+      left: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="test" class="test"></div>
+  <div class="scoreboard">
+    <div class="player">
+      <h3 id="homePlayer"></h3>
+      <div id="indicator-left" class="indicator indicator-left"></div>
+    </div>
+
+    <div class="score">
+      <span id="homeScore"></span>
+
+      <div>
+        <span id="homeFrames"></span>
+        <span id="totalFrames"></span>
+        <span id="awayFrames"></span>
+      </div>
+
+      <span id="awayScore"></span>
+    </div>
+
+    <div class="player">
+      <h3 id="awayPlayer"></h3>
+      <div id="indicator-right" class="indicator indicator-right"></div>
+    </div>
+  </div>
+
+  <script>
+    async function getScore() {
+      return fetch('./placar.json')
+        .then(response => response.json())
+        .then(data => {
+          return data;
+        })
+        .catch(error => {
+          console.error('Erro ao carregar o arquivo JSON:', error);
+        });
+    }
+
+
+    async function loadScoreboard() {
+      const score = await getScore();
+
+      document.getElementById('homePlayer').textContent = score?.jogador_1?.nome || "Jogador 1";
+      document.getElementById('homeScore').textContent = score?.jogador_1?.pontos || "0";
+      document.getElementById('homeFrames').textContent = score?.jogador_1?.frames || "0";
+
+      document.getElementById('awayPlayer').textContent = score?.jogador_2?.nome || "Jogador 2";
+      document.getElementById('awayScore').textContent = score?.jogador_2?.pontos || "0";
+      document.getElementById('awayFrames').textContent = score?.jogador_2?.frames || "0";
+
+      document.getElementById('totalFrames').textContent = `(${(score?.frames || "0")})`;
+
+      if (score.jogando == "1") {
+        document.getElementById("indicator-left").style.display = "block";
+        document.getElementById("indicator-right").style.display = "none";
+      }
+
+      if (score.jogando == "2") {
+        document.getElementById("indicator-right").style.display = "block";
+        document.getElementById("indicator-left").style.display = "none";
+      }
+    }
+
+    loadScoreboard();
+    setInterval(loadScoreboard, 1000);
+  </script>
+</body>
+
+</html>

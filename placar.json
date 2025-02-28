@@ -1,0 +1,14 @@
+{
+  "jogador_1": {
+    "nome": "Brecel",
+    "pontos": "0",
+    "frames": "0"
+  },
+  "jogador_2": {
+    "nome": "O'Sullivan",
+    "pontos": "0",
+    "frames": "0"
+  },
+  "frames": "3",
+  "jogando": "1"
+}
